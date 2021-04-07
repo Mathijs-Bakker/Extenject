@@ -19,8 +19,6 @@ This project is simply a fork of [Zenject](https://github.com/modesttree/zenject
 <details>
 <summary>Details</summary>
 
-  - [Lawsuit](#lawsuit)
-  - [Support](#support)
   - [Introduction](#introduction)
   - [Features](#features)
   - [Installation *](#installation-)
