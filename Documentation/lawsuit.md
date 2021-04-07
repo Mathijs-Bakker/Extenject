@@ -1,3 +1,14 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<details>
+<summary>Details</summary>
+
+- [Lawsuit](#lawsuit)
+- [Support](#support)
+
+</details>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 This is from the 'old' README.md. I have taken it out and placed a copy here. For those who have interest reading.
 
 ## Lawsuit
