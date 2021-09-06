@@ -1,0 +1,12 @@
+{
+  "name": "com.svermeulen.extenject",
+  "version": "9.2.0",
+  "displayName": "Extenject",
+  "description": "Dependency Injection Framework for Unity3D",
+  "unity": "2019.3",
+  "keywords": [
+    "extenject"
+  ],
+  "license": "MIT",
+  "dependencies": {}
+}
