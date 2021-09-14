@@ -13,7 +13,7 @@
 
 Below are a bunch of randomly assorted examples of bindings that you might include in one of your installers.
 
-For more examples, you may also be interested in reading some of the Unit tests (see `Zenject/OptionalExtras/UnitTests` and `Zenject/OptionalExtras/IntegrationTests` directories)
+For more examples, you may also be interested in reading some of the Unit tests (see `Zenject/Tests/UnitTests` and `Zenject/Tests/IntegrationTests` directories)
 
 ```csharp
 
