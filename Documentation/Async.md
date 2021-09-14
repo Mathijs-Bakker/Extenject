@@ -22,7 +22,7 @@ In dependency injection, the injector resolves dependencies of the target class 
 
 This creates a dilemma while implementing dependencies that are resolved asynchronous. You can design around the DI limitations by carefully designing your code so that the injection happens after the `async` process is completed. This requires careful planning, which leads to an increased complexity in the setup, and is also prone to errors.
 
-Alternatively you can inject an intermediary object that tracks the result of the `async` operation. When you need to access the dependency, you can use this intermediary object to check if the `async` task is completed and get the resulting object. With the experimental `async` support, we would like to provide ways to tackle this problem in Extenject. You can find `async` extensions in the folder **Plugins/Zenject/OptionalExtras/Async**.
+Alternatively you can inject an intermediary object that tracks the result of the `async` operation. When you need to access the dependency, you can use this intermediary object to check if the `async` task is completed and get the resulting object. With the experimental `async` support, we would like to provide ways to tackle this problem in Extenject. You can find `async` extensions in the folder **Plugins/Zenject/Source/Runtime/Async**.
 
 ### Example
 
