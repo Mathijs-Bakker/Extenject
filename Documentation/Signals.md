@@ -489,7 +489,7 @@ Container.BindSignal<UserJoinedSignal>().ToMethod<Greeter>((x, s) => x.SayHello(
 
 ### SignalBusInstaller
 
-Signals are an optional feature of Zenject.  When importing Zenject, if you do not want to include signals you can simply uncheck the `OptionalExtras/Signals` folder.  As a result of this, signals are not enabled automatically, so you have to explicitly install them yourself by calling `SignalBusInstaller.Install(Container)` in one of your installers.
+Signals are an optional feature of Zenject.  When importing Zenject, if you do not want to include signals you can simply uncheck the `Zenject/Source/Runtime/Signals` folder.  As a result of this, signals are not enabled automatically, so you have to explicitly install them yourself by calling `SignalBusInstaller.Install(Container)` in one of your installers.
 
 You could either do this just one time in a `ProjectContext` installer, or you could do this in each scene in a `SceneContext` installer.  Note that you only need to do this once, and then you can use signals in the container that you pass to `SignalBusInstaller,` as well as any subcontainers, which is why if you install to `ProjectContext` you do not need to install to `SceneContext.`
 
