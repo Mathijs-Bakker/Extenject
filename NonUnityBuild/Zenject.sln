@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject1", "..\UnityProject
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-usage2", "..\AssemblyBuild\Zenject-usage\Zenject-usage.csproj", "{E22B1CBF-7E4D-48BD-953B-2B730BD9FF13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-Signals3", "..\UnityProject\Assets\Plugins\Zenject\OptionalExtras\Signals\Zenject-Signals.csproj", "{2F314FC6-5BD1-4A28-9FA0-F1F4C84871DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-Signals3", "..\UnityProject\Assets\Plugins\Zenject\Source\Runtime\Signals\Zenject-Signals.csproj", "{2F314FC6-5BD1-4A28-9FA0-F1F4C84871DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-ReflectionBaking4", "..\UnityProject\Assets\Plugins\Zenject\OptionalExtras\ReflectionBaking\Zenject-ReflectionBaking.csproj", "{343BA74F-10FD-489D-A6FD-A3FD2B436D98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-ReflectionBaking4", "..\UnityProject\Assets\Plugins\Zenject\Source\Editor\ReflectionBaking\Zenject-ReflectionBaking.csproj", "{343BA74F-10FD-489D-A6FD-A3FD2B436D98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zenject-ReflectionBakingCommandLine5", "Zenject-ReflectionBakingCommandLine\Zenject-ReflectionBakingCommandLine.csproj", "{5715833C-C5AD-4D9E-A8C7-6612622ADAB6}"
 EndProject
