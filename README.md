@@ -189,7 +189,7 @@ You can install Zenject using any of the following methods
     * After syncing the git repo, note that you will have to build the `Zenject-Usage.dll` by building the solution at `AssemblyBuild\Zenject-usage\Zenject-usage.sln`.  Or, if you prefer you can get `Zenject-Usage.dll` from Releases section instead
     * Then you can copy the `UnityProject/Assets/Plugins/Zenject` directory to your own Unity3D project.
 
-Note that when importing Zenject into your unity project, you can uncheck any folder underneath the OptionalExtras folder for cases where you don't want to include it, or if you just want the core zenject functionality, you can uncheck the entire OptionalExtras directory.
+Note that when importing Zenject into your unity project, you can uncheck any folder underneath the "Samples" or the "Tests" for cases where you don't want to include it, or if you just want the core zenject functionality, you can uncheck the entire "Samples" and "Tests" directory.
 
 ## History
 
@@ -205,11 +205,11 @@ The Zenject documentation is split up into the following sections.  It is split 
 
 Another great starting point is to watch [this youtube series on zenject](https://www.youtube.com/watch?v=IS2YUIb_w_M&list=PLKERDLXpXl_jNJPY2czQcfPXW4BJaGZc_) created by Infallible Code.
 
-You might also benefit from playing with the provided sample projects (which you can find by opening `Zenject/OptionalExtras/SampleGame1` or `Zenject/OptionalExtras/SampleGame2`).
+You might also benefit from playing with the provided sample projects (which you can find by opening `Zenject/Samples/SampleGame1` or `Zenject/Samples/SampleGame2`).
 
 If you are a DI veteran, then it might be worth taking a look at the [cheatsheet](#cheat-sheet) at the bottom of this page, which should give you an idea of the syntax, which might be all you need to get started.
 
-The tests may also be helpful to show usage for each specific feature (which you can find at `Zenject/OptionalExtras/UnitTests` and `Zenject/OptionalExtras/IntegrationTests`)
+The tests may also be helpful to show usage for each specific feature (which you can find at `Zenject/Tests/UnitTests` and `Zenject/Tests/IntegrationTests`)
 
 Also see [further reading section](#further-reading) for some external zenject tutorials provided elsewhere.
 
@@ -2852,7 +2852,7 @@ There are two settings on ProjectContext related to reflection baking that can b
 
 ## Upgrade Guide for Zenject 6
 
-The biggest backwards-incompatible change in Zenject 6 is that the signals system was re-written from scratch and works quite differently now.  However - if you want to continue using the previous signals implementation you can get a zenject-6-compatible version of that [here](https://github.com/svermeulen/ZenjectSignalsOld). So to use that, just import zenject 6 and make sure to uncheck the `OptionalExtras/Signals` folder, and then add the ZenjectSignalsOld folder to your project from that link.
+The biggest backwards-incompatible change in Zenject 6 is that the signals system was re-written from scratch and works quite differently now.  However - if you want to continue using the previous signals implementation you can get a zenject-6-compatible version of that [here](https://github.com/svermeulen/ZenjectSignalsOld). So to use that, just import zenject 6 and make sure to uncheck the `Zenject/Source/Runtime/Signals` folder, and then add the ZenjectSignalsOld folder to your project from that link.
 
 Another backwards-incompatible change in zenject 6 is that AsSingle can no longer be used across multiple bind statements when mapping to the same instance.  In Zenject 5.x and earlier, you could do the following:
 
