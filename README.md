@@ -184,6 +184,13 @@ You can install Zenject using any of the following methods
     * This option is a [feature request](https://github.com/svermeulen/Extenject/issues/24). The package will be released when Unity is ready. Unity is not giving any insights on the development status. But the expectation is in the first or second release of 2020.
     * If you can not wait. There is an alternative. But you will need the Unity extension found [here](https://github.com/mob-sakai/UpmGitExtension). And the package found [here](https://github.com/starikcetin/Extenject/tree/upm).
 
+1.  __Unity Package Manager__
+
+    * Use `UnityProject/Assets/Plugins/Zenject/Source/package.json`
+        * Window -> Package Manager
+        * Select `Add package from git URL...`
+        * Use `https://github.com/<organization>/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#<tag>`
+
 1.  __From Source__
 
     * After syncing the git repo, note that you will have to build the `Zenject-Usage.dll` by building the solution at `AssemblyBuild\Zenject-usage\Zenject-usage.sln`.  Or, if you prefer you can get `Zenject-Usage.dll` from Releases section instead
