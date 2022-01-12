@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject.Internal;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 #if UNITY_EDITOR
 using UnityEditor;
