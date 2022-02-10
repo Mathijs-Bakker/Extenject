@@ -262,7 +262,9 @@ namespace Zenject.Internal
         // without any of their Awake() methods firing.
         public static Transform GetOrCreateInactivePrefabParent()
         {
-            if(_disabledIndestructibleGameObject == null || (!Application.isPlaying && _disabledIndestructibleGameObject.scene != SceneManager.GetActiveScene()))
+            if(_disabledIndestructibleGameObject == null ||
+                (!Application.isPlaying && _disabledIndestructibleGameObject.scene != SceneManager.GetActiveScene()) ||
+                !_disabledIndestructibleGameObject.scene.isLoaded)
             {
                 var go = new GameObject("ZenUtilInternal_PrefabParent");
                 go.hideFlags = HideFlags.HideAndDontSave;
