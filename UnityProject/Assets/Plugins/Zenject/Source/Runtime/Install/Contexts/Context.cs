@@ -286,12 +286,14 @@ namespace Zenject
                 }
             }
 
-            // We'd prefer to use GameObject.FindObjectsOfType<ZenjectBinding>() here
-            // instead but that doesn't find inactive gameobjects
             // TODO: Consider changing this
             // Maybe ZenjectBinding could add itself to a registry class on Awake/OnEnable
             // then we could avoid calling the slow Resources.FindObjectsOfTypeAll here
+#if UNITY_2020_1_OR_NEWER
+            foreach (var binding in FindObjectsOfType<ZenjectBinding>(true))
+#else
             foreach (var binding in Resources.FindObjectsOfTypeAll<ZenjectBinding>())
+#endif
             {
                 if (binding == null)
                 {
