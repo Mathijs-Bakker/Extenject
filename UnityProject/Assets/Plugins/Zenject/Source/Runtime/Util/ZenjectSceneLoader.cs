@@ -25,6 +25,7 @@ namespace Zenject
         readonly ProjectKernel _projectKernel;
         readonly DiContainer _sceneContainer;
 
+        [Inject]
         public ZenjectSceneLoader(
             [InjectOptional]
             SceneContext sceneRoot,
