@@ -1091,7 +1091,7 @@ There are three ways to do this.
 
 1. **Prefabs within Resources folder**.  You can also place your installer prefabs underneath a Resoures folder and install them directly from code by using the Resources path.  For details on usage see [here](#runtime-parameters-for-installers).
 
-Another option in addition to `MonoInstaller` and `Installer<>` is to use `ScriptableObjectInstaller` which has some unique advantages (especially for settings) - for details see [here](#scriptableobject-installer).
+Another option in addition to `MonoInstaller` and `Installer<>` is to use `ScriptableObjectInstaller` which has some unique advantages (especially for settings) - for details see [here](#scriptable-object-installer).
 
 When calling installers from other installers it is common to want to pass parameters into it.  See [here](#runtime-parameters-for-installers) for details on how that is done.
 
@@ -1319,7 +1319,7 @@ public class TestInstaller : MonoInstaller<TestInstaller>
 
 Now, if we run our scene we can change the speed value to tune the Foo class in real time.
 
-Another (arguably better) way to do this is to use `ScriptableObjectInstaller` instead of `MonoInstaller,` which have the added advantage that you can change your settings at runtime and have those changes automatically persist when play mode is stopped.  See [here](#scriptableobject-installer) for details.
+Another (arguably better) way to do this is to use `ScriptableObjectInstaller` instead of `MonoInstaller,` which have the added advantage that you can change your settings at runtime and have those changes automatically persist when play mode is stopped.  See [here](#scriptable-object-installer) for details.
 
 ## Object Graph Validation
 
