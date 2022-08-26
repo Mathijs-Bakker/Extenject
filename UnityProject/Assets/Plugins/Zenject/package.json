@@ -1,8 +1,20 @@
-  
+
 {
 	"name": "com.svermeulen.extenject",
 	"displayName": "Extenject",
 	"version": "0.0.1",
 	"description": "Dependency Injection Framework for Unity3D",
-	"dependencies": {}
+	"dependencies": {},
+	"samples": [
+		{
+			"displayName": "Sample Game 1 (beginner)",
+			"description": "",
+			"path": "Samples~/SampleGame1 (Beginner)"
+		},
+		{
+			"displayName": "Sample Game 2 (advanced)",
+			"description": "",
+			"path": "Samples~/SampleGame2 (Advanced)"
+		}
+	]
 }
