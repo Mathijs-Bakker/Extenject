@@ -9,7 +9,7 @@
 
 # Extenject: extensions, bug fixes and updates for Zenject 
 
-This project is simply a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
+This project is a fork of [Zenject](https://github.com/modesttree/zenject) with the goal of being actively maintained.
 
 ## Table Of Contents
 
