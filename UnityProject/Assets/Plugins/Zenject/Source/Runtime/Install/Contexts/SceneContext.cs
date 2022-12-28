@@ -136,6 +136,11 @@ namespace Zenject
             }
         }
 
+        protected virtual void OnDestroy()
+        {
+            _container.UnbindAll();
+        }
+
 #if UNITY_EDITOR
         protected override void ResetInstanceFields()
         {
