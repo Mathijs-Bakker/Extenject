@@ -54,7 +54,7 @@ namespace Zenject
             // we can't do that in this case since the scene isn't loaded until the next frame
         }
 
-            public AsyncOperation LoadSceneAsync(
+        public AsyncOperation LoadSceneAsync(
             string sceneName,
             LoadSceneMode loadMode = LoadSceneMode.Single,
             Action<DiContainer> extraBindings = null,
@@ -67,6 +67,42 @@ namespace Zenject
                 "Unable to load scene '{0}'", sceneName);
 
             return SceneManager.LoadSceneAsync(sceneName, loadMode);
+        }
+
+        public void LoadScene(
+            string sceneName,
+            LoadSceneParameters loadSceneParameters,
+            Action<DiContainer> extraBindings = null,
+            LoadSceneRelationship containerMode = LoadSceneRelationship.None,
+            Action<DiContainer> extraBindingsLate = null)
+        {
+            PrepareForLoadScene(loadSceneParameters.loadSceneMode, extraBindings, extraBindingsLate, containerMode);
+
+            Assert.That(Application.CanStreamedLevelBeLoaded(sceneName),
+                "Unable to load scene '{0}'", sceneName);
+
+            SceneManager.LoadScene(sceneName, loadSceneParameters);
+
+            // It would be nice here to actually verify that the new scene has a SceneContext
+            // if we have extra binding hooks, or LoadSceneRelationship != None, but
+            // we can't do that in this case since the scene isn't loaded until the next frame
+        }
+
+#if UNITY_2018_3_OR_NEWER
+
+        public AsyncOperation LoadSceneAsync(
+            string sceneName,
+            LoadSceneParameters loadSceneParameters,
+            Action<DiContainer> extraBindings = null,
+            LoadSceneRelationship containerMode = LoadSceneRelationship.None,
+            Action<DiContainer> extraBindingsLate = null)
+        {
+            PrepareForLoadScene(loadSceneParameters.loadSceneMode, extraBindings, extraBindingsLate, containerMode);
+
+            Assert.That(Application.CanStreamedLevelBeLoaded(sceneName),
+                "Unable to load scene '{0}'", sceneName);
+
+            return SceneManager.LoadSceneAsync(sceneName, loadSceneParameters);
         }
 
         void PrepareForLoadScene(
@@ -113,6 +149,8 @@ namespace Zenject
             SceneContext.ExtraBindingsLateInstallMethod = extraBindingsLate;
         }
 
+#endif
+
         public void LoadScene(
             int sceneIndex,
             LoadSceneMode loadMode = LoadSceneMode.Single,
@@ -146,6 +184,43 @@ namespace Zenject
 
             return SceneManager.LoadSceneAsync(sceneIndex, loadMode);
         }
+
+#if UNITY_2018_3_OR_NEWER
+
+        public void LoadScene(
+            int sceneIndex,
+            LoadSceneParameters loadSceneParameters,
+            Action<DiContainer> extraBindings = null,
+            LoadSceneRelationship containerMode = LoadSceneRelationship.None,
+            Action<DiContainer> extraBindingsLate = null)
+        {
+            PrepareForLoadScene(loadSceneParameters.loadSceneMode, extraBindings, extraBindingsLate, containerMode);
+
+            Assert.That(Application.CanStreamedLevelBeLoaded(sceneIndex),
+                "Unable to load scene '{0}'", sceneIndex);
+
+            SceneManager.LoadScene(sceneIndex, loadSceneParameters);
+
+            // It would be nice here to actually verify that the new scene has a SceneContext
+            // if we have extra binding hooks, or LoadSceneRelationship != None, but
+            // we can't do that in this case since the scene isn't loaded until the next frame
+        }
+
+        public AsyncOperation LoadSceneAsync(
+            int sceneIndex,
+            LoadSceneParameters loadSceneParameters,
+            Action<DiContainer> extraBindings = null,
+            LoadSceneRelationship containerMode = LoadSceneRelationship.None,
+            Action<DiContainer> extraBindingsLate = null)
+        {
+            PrepareForLoadScene(loadSceneParameters.loadSceneMode, extraBindings, extraBindingsLate, containerMode);
+
+            Assert.That(Application.CanStreamedLevelBeLoaded(sceneIndex),
+                "Unable to load scene '{0}'", sceneIndex);
+
+            return SceneManager.LoadSceneAsync(sceneIndex, loadSceneParameters);
+        }
+#endif
     }
 }
 
