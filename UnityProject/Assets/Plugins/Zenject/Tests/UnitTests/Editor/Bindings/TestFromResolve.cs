@@ -172,6 +172,22 @@ namespace Zenject.Tests.Bindings
 
             Assert.IsEqual(subContainer.Resolve<IFoo>(), foo1);
         }
+        
+        [Test]
+        public void TestResolveAllWithInjectSource()
+        {
+            var foo = new Foo();
+            var secondFoo = new SecondFoo();
+
+            Container.BindInterfacesTo<Foo>().FromInstance(foo);
+
+            var subContainer = Container.CreateSubContainer();
+            subContainer.BindInterfacesTo<SecondFoo>().FromInstance(secondFoo);
+            
+            Assert.IsEqual(subContainer.ResolveAll<IFoo>(InjectSources.Any).Count, 2);
+            Assert.IsEqual(subContainer.ResolveAll<IFoo>(InjectSources.Local).Count, 1);
+        }
+
 
         [Test]
         public void TestInjectSource2()
@@ -201,6 +217,10 @@ namespace Zenject.Tests.Bindings
         }
 
         class Foo : IFoo, IBar
+        {
+        }
+
+        class SecondFoo : IFoo
         {
         }
     }

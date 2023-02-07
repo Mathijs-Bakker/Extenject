@@ -2469,10 +2469,20 @@ namespace Zenject
         {
             return (List<TContract>)ResolveAll(typeof(TContract));
         }
+        
+        public List<TContract> ResolveAll<TContract>(InjectSources injectSources)
+        {
+            return (List<TContract>)ResolveAll(typeof(TContract), injectSources);
+        }
 
         public IList ResolveAll(Type contractType)
         {
             return ResolveIdAll(contractType, null);
+        }
+        
+        public IList ResolveAll(Type contractType, InjectSources injectSources)
+        {
+            return ResolveIdAll(contractType, null, injectSources);
         }
 
         public List<TContract> ResolveIdAll<TContract>(object identifier)
@@ -2486,6 +2496,17 @@ namespace Zenject
             {
                 context.Identifier = identifier;
                 context.Optional = true;
+                return ResolveAll(context);
+            }
+        }
+        
+        public IList ResolveIdAll(Type contractType, object identifier, InjectSources injectSources)
+        {
+            using (var context = ZenPools.SpawnInjectContext(this, contractType))
+            {
+                context.Identifier = identifier;
+                context.Optional = true;
+                context.SourceType = injectSources;
                 return ResolveAll(context);
             }
         }
