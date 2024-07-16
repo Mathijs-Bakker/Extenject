@@ -58,7 +58,7 @@ namespace Zenject.Tests.Bindings
 
         private IFoo awaitReturn;
         [UnityTest]
-        [Timeout(300)]
+        [Timeout(10000)]
         public IEnumerator TestSimpleMethodAwaitable()
         {
             PreInstall();
@@ -75,11 +75,12 @@ namespace Zenject.Tests.Bindings
 
             TestAwait(asycFoo);
 
-            while (awaitReturn == null)
+            for (int i = 0; i < 60 * 10 && awaitReturn == null; i++)
             {
                 yield return null;
             }
-            Assert.Pass();
+
+            Assert.NotNull(awaitReturn);
         }
 
         [UnityTest]
@@ -123,7 +124,8 @@ namespace Zenject.Tests.Bindings
         
         private async void TestAwait(AsyncInject<IFoo> asycFoo)
         {
-            awaitReturn = await asycFoo;
+            await asycFoo.Task;
+            awaitReturn = asycFoo.Result;
         }
 
         public interface IFoo

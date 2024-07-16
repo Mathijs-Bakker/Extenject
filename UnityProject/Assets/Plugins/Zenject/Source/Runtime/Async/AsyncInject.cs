@@ -1,19 +1,32 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using ModestTree;
+using System.Collections.Generic;
+
+#if UNITASK_PLUGIN
+using Cysharp.Threading.Tasks;
+using Task = Cysharp.Threading.Tasks.UniTask;
+#else
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+#endif
 
 namespace Zenject
 {
     public interface IAsyncInject
     {
         bool HasResult { get; }
-        bool IsCancelled  { get; }
-        bool IsFaulted  { get; }
+        bool IsCancelled { get; }
+        bool IsFaulted { get; }
         bool IsCompleted { get; }
-        
+        object Result { get; }
+
+        Task Task { get; }
+
+#if !UNITASK_PLUGIN
         TaskAwaiter GetAwaiter();
+#endif
     }
 
 
@@ -21,73 +34,79 @@ namespace Zenject
     [NoReflectionBaking]
     public class AsyncInject<T> : IAsyncInject
     {
-        protected readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+#if UNITASK_PLUGIN
+        public delegate UniTask<T> AsyncCreationMethod(InjectContext context, List<TypeValuePair> args, CancellationToken cancellationToken);
+#else
+        public delegate Task<T> AsyncCreationMethod(InjectContext context, List<TypeValuePair> args, CancellationToken cancellationToken);
+#endif
+
+        protected readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         protected readonly InjectContext _context;
+        protected readonly List<TypeValuePair> _args;
 
         public event Action<T> Completed;
-        public event Action<AggregateException>  Faulted;
+        public event Action<AggregateException> Faulted;
         public event Action Cancelled;
 
         public bool HasResult { get; protected set; }
         public bool IsSuccessful { get; protected set; }
-        public bool IsCancelled  { get; protected set; }
-        public bool IsFaulted  { get; protected set; }
+        public bool IsCancelled { get; protected set; }
+        public bool IsFaulted { get; protected set; }
 
         public bool IsCompleted => IsSuccessful || IsCancelled || IsFaulted;
-        
+
+        object IAsyncInject.Result => Result;
+        public Task Task { get; }
+
         T _result;
-        Task<T> task;
-        
+
+#if !UNITASK_PLUGIN
+        private Task<T> _loadResultTask;
+#endif
+
         protected AsyncInject(InjectContext context)
         {
             _context = context;
         }
-        
-        public AsyncInject(InjectContext context, Func<CancellationToken, Task<T>> asyncMethod)
+
+        public AsyncInject(InjectContext context, List<TypeValuePair> args, AsyncCreationMethod asyncMethod)
         {
+            _args = args;
             _context = context;
 
-            StartAsync(asyncMethod, cancellationTokenSource.Token);
+            Task = StartAsync(asyncMethod, _cancellationTokenSource.Token);
         }
 
         public void Cancel()
         {
-            cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Cancel();
         }
-        
-        protected async void StartAsync(Func<CancellationToken, Task<T>> asyncMethod, CancellationToken token)
+
+        protected async Task StartAsync(AsyncCreationMethod asyncMethod, CancellationToken token)
         {
             try
             {
-                task = asyncMethod(token);
-                await task;
+#if UNITASK_PLUGIN
+                T result = await asyncMethod(_context, _args, token);
+#else
+                T result = await (_loadResultTask = asyncMethod(_context, _args, token));
+#endif
+                HandleCompleted(result);
+            }
+            catch (OperationCanceledException)
+            {
+                HandleCancelled();
+                throw;
             }
             catch (AggregateException e)
             {
                 HandleFaulted(e);
-                return;
+                throw;
             }
             catch (Exception e)
             {
                 HandleFaulted(new AggregateException(e));
-                return;
-            }
-
-            if (token.IsCancellationRequested)
-            {
-                HandleCancelled();
-                return;
-            }
-            
-            if (task.IsCompleted)
-            {
-                HandleCompleted(task.Result);
-            }else if (task.IsCanceled)
-            {
-                HandleCancelled();
-            }else if (task.IsFaulted)
-            {
-                HandleFaulted(task.Exception);
+                throw;
             }
         }
 
@@ -118,6 +137,7 @@ namespace Zenject
                 result = _result;
                 return true;
             }
+
             result = default;
             return false;
         }
@@ -130,9 +150,10 @@ namespace Zenject
                 return _result;
             }
         }
-        
-        public TaskAwaiter<T> GetAwaiter() => task.GetAwaiter();
 
-        TaskAwaiter IAsyncInject.GetAwaiter() => task.ContinueWith(task => { }).GetAwaiter();
+#if !UNITASK_PLUGIN
+        TaskAwaiter IAsyncInject.GetAwaiter() => ((Task) _loadResultTask).GetAwaiter();
+        public TaskAwaiter<T> GetAwaiter() => _loadResultTask.GetAwaiter();
+#endif
     }
 }

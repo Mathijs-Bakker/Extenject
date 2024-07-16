@@ -68,6 +68,8 @@ namespace Zenject
                     _inactiveItems.Push(AllocNew());
                 }
             }
+            
+            Assert.That(!_factory.IsAsync);
 
 #if UNITY_EDITOR
             StaticMemoryPoolRegistry.Add(this);

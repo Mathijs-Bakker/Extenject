@@ -1,0 +1,57 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+using UnityEngine;
+
+#if UNITASK_PLUGIN
+using Cysharp.Threading.Tasks;
+#else
+using System.Threading.Tasks;
+#endif
+
+namespace Zenject
+{
+    public static class FactoryPoolAsyncBinder
+    {
+<#
+    for (int paramCount = 0; paramCount <= 6; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ",";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? ", " : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+        public static ArgConditionCopyNonLazyBinder FromMonoPoolableMemoryPoolAsync<<#= tParams#>TContract>(
+            this FactoryFromBinder<<#= tParams#>TContract> fromBinder)
+            // Unfortunately we have to pass the same contract in again to satisfy the generic
+            // constraints below
+            where TContract : Component, IPoolable<<#= tParams#>IMemoryPool>
+        {
+            return fromBinder.FromMonoPoolableMemoryPoolAsync<<#= tParams#>TContract>(x => {});
+        }
+
+        public static ArgConditionCopyNonLazyBinder FromMonoPoolableMemoryPoolAsync<<#= tParams#>TContract>(
+            this FactoryFromBinder<<#= tParams#>TContract> fromBinder,
+            Action<MemoryPoolInitialSizeMaxSizeBinder<TContract>> poolBindGenerator)
+            // Unfortunately we have to pass the same contract in again to satisfy the generic
+            // constraints below
+            where TContract : Component, IPoolable<<#= tParams#>IMemoryPool>
+        {
+            return fromBinder.FromPoolableMemoryPool<<#= tParams#>TContract, MonoPoolableMemoryPoolAsync<<#= tParams#>IMemoryPool, TContract>>(poolBindGenerator);
+        }
+<#
+    }
+#>
+    }
+}

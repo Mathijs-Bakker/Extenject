@@ -106,7 +106,7 @@ namespace Zenject
             // Unfortunately we have to pass the same contract in again to satisfy the generic
             // constraints below
             where TContract : IPoolable<TParam1, TParam2, IMemoryPool>
-            where TMemoryPool : MemoryPool<TParam1, TParam2, IMemoryPool, TContract>
+            where TMemoryPool : IMemoryPool<TParam1, TParam2, IMemoryPool, TContract>
         {
             return fromBinder.FromPoolableMemoryPool<TParam1, TParam2, TContract, TMemoryPool>(x => {});
         }
@@ -117,7 +117,7 @@ namespace Zenject
             // Unfortunately we have to pass the same contract in again to satisfy the generic
             // constraints below
             where TContract : IPoolable<TParam1, TParam2, IMemoryPool>
-            where TMemoryPool : MemoryPool<TParam1, TParam2, IMemoryPool, TContract>
+            where TMemoryPool : IMemoryPool<TParam1, TParam2, IMemoryPool, TContract>
         {
             // Use a random ID so that our provider is the only one that can find it and so it doesn't
             // conflict with anything else

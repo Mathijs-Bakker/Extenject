@@ -1,0 +1,92 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+
+#if UNITASK_PLUGIN
+using Cysharp.Threading.Tasks;
+#else
+using System.Threading.Tasks;
+#endif
+
+namespace Zenject
+{
+<#
+    for (int paramCount = 0; paramCount <= 10; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ",";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? ", " : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+    public class MemoryPoolAsync<<#= tParams #> TValue>
+        : MemoryPoolBaseAsync<TValue>, 
+          IMemoryPool<<#= tParams #> TValue>, 
+          IFactory<<#= tParams #> TValue>
+    {
+        public async
+#if UNITASK_PLUGIN
+            UniTask<TValue>
+#else
+            Task<TValue>
+#endif
+        SpawnAsync(<#= namedParams #>)
+        {
+            var item = await GetInternal();
+
+            if (!Container.IsValidating)
+            {
+#if ZEN_INTERNAL_PROFILING
+                using (ProfileTimers.CreateTimedBlock("User Code"))
+#endif
+#if UNITY_EDITOR
+                using (ProfileBlock.Start("{0}.Reinitialize", GetType()))
+#endif
+                {
+                    Reinitialize(<#= names  + separator#> item);
+                }
+            }
+
+            return item;
+        }
+
+        protected virtual void Reinitialize(<#= namedParams + separator #>TValue item)
+        {
+            // Optional
+        }
+
+        public TValue Spawn(<#= namedParams #>)
+        {
+            throw new ZenjectException("Cannot use Spawn in async pool");
+        }
+
+        TValue IFactory<<#= tParams #> TValue>.Create(<#= namedParams #>)
+        {
+            return Spawn(<#= names #>);
+        }
+
+#if UNITASK_PLUGIN
+        UniTask<TValue>
+#else
+        Task<TValue>
+#endif
+        IFactory<<#= tParams #> TValue>.CreateAsync(<#= namedParams #>)
+        {
+            return SpawnAsync(<#= names #>);
+        }
+    }
+
+<#
+    }
+#>
+}

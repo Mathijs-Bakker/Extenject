@@ -15,11 +15,11 @@ public class AddressableInject<T> : AsyncInject<T> where T : UnityEngine.Object
     public AddressableInject(InjectContext context, Func<CancellationToken, Task<AsyncOperationHandle<T>>> asyncMethod) 
         : base(context)
     {
-        StartAsync(async (ct) =>
+        StartAsync(async (_, _, ct) =>
         {
             _handle = await asyncMethod(ct);
             return _handle.Result;
-        }, cancellationTokenSource.Token);
+        }, _cancellationTokenSource.Token);
     }
 }
 #endif

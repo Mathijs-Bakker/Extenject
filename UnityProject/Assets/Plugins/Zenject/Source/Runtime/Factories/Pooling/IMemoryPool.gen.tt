@@ -1,0 +1,49 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+
+#if UNITASK_PLUGIN
+using Cysharp.Threading.Tasks;
+using Task = Cysharp.Threading.Tasks.UniTask;
+#else
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+#endif
+
+namespace Zenject
+{
+<#
+    for (int paramCount = 0; paramCount <= 10; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "in TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ", ";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? "," : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+    public interface IMemoryPool<<#= tParams#>TValue> : IDespawnableMemoryPool<TValue>
+    {
+        TValue Spawn(<#= namedParams #>);
+
+#if UNITASK_PLUGIN
+        UniTask<TValue>
+#else
+        Task<TValue>
+#endif
+        SpawnAsync(<#= namedParams #>) => Task.FromResult(Spawn(<#= names #>));
+    }
+
+<#
+    }
+#>
+}
