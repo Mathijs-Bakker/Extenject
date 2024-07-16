@@ -37,7 +37,7 @@ namespace Zenject
     public class MemoryPool<TParam1, TValue>
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TValue>, IFactory<TParam1, TValue>
     {
-        public TValue Spawn(TParam1 param)
+        public virtual TValue Spawn(TParam1 param)
         {
             var item = GetInternal();
 
@@ -72,7 +72,7 @@ namespace Zenject
     public class MemoryPool<TParam1, TParam2, TValue>
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TValue>, IFactory<TParam1, TParam2, TValue>
     {
-        public TValue Spawn(TParam1 param1, TParam2 param2)
+        public virtual TValue Spawn(TParam1 param1, TParam2 param2)
         {
             var item = GetInternal();
 
@@ -107,7 +107,7 @@ namespace Zenject
     public class MemoryPool<TParam1, TParam2, TParam3, TValue>
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TValue>, IFactory<TParam1, TParam2, TParam3, TValue>
     {
-        public TValue Spawn(TParam1 param1, TParam2 param2, TParam3 param3)
+        public virtual TValue Spawn(TParam1 param1, TParam2 param2, TParam3 param3)
         {
             var item = GetInternal();
 
@@ -141,7 +141,7 @@ namespace Zenject
     public class MemoryPool<TParam1, TParam2, TParam3, TParam4, TValue>
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TValue>, IFactory<TParam1, TParam2, TParam3, TParam4, TValue>
     {
-        public TValue Spawn(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4)
+        public virtual TValue Spawn(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4)
         {
             var item = GetInternal();
 
@@ -175,7 +175,7 @@ namespace Zenject
     public class MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>, IFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TValue>
     {
-        public TValue Spawn(
+        public virtual TValue Spawn(
             TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5)
         {
             var item = GetInternal();
@@ -210,7 +210,7 @@ namespace Zenject
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>,
         IFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TValue>
     {
-        public TValue Spawn(
+        public virtual TValue Spawn(
             TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5, TParam6 param6)
         {
             var item = GetInternal();
@@ -246,7 +246,7 @@ namespace Zenject
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>,
         IFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TValue>
     {
-        public TValue Spawn(
+        public virtual TValue Spawn(
             TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5, TParam6 param6, TParam7 param7)
         {
             var item = GetInternal();
@@ -282,7 +282,7 @@ namespace Zenject
         : MemoryPoolBase<TValue>, IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TValue>,
         IFactory<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TParam7, TParam8, TValue>
     {
-        public TValue Spawn(
+        public virtual TValue Spawn(
             TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5, TParam6 param6, TParam7 param7, TParam8 param8)
         {
             var item = GetInternal();
