@@ -4,52 +4,10 @@ using ModestTree;
 
 namespace Zenject
 {
-    public abstract class PoolableMemoryPoolProviderBase<TContract> : IProvider
-    {
-        public PoolableMemoryPoolProviderBase(
-            DiContainer container, Guid poolId)
-        {
-            Container = container;
-            PoolId = poolId;
-        }
-
-        public bool IsCached
-        {
-            get { return false; }
-        }
-
-        protected Guid PoolId
-        {
-            get;
-            private set;
-        }
-
-        protected DiContainer Container
-        {
-            get;
-            private set;
-        }
-
-        public bool TypeVariesBasedOnMemberType
-        {
-            get { return false; }
-        }
-
-        public Type GetInstanceType(InjectContext context)
-        {
-            return typeof(TContract);
-        }
-
-        public abstract void GetAllInstancesWithInjectSplit(
-            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer);
-    }
-
-    // Zero parameters
-
     [NoReflectionBaking]
     public class PoolableMemoryPoolProvider<TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
         where TContract : IPoolable<IMemoryPool>
-        where TMemoryPool : MemoryPool<IMemoryPool, TContract>
+        where TMemoryPool : IMemoryPool<IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -59,6 +17,8 @@ namespace Zenject
         {
         }
 
+        public override bool IsAsync => _pool?.IsAsync ?? false;
+
         public void Validate()
         {
             Container.ResolveId<TMemoryPool>(PoolId);
@@ -67,8 +27,7 @@ namespace Zenject
         public override void GetAllInstancesWithInjectSplit(
             InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
         {
-            Assert.That(args.IsEmpty());
-
+            Assert.IsEqual(args.Count, 0);
             Assert.IsNotNull(context);
 
             Assert.That(typeof(TContract).DerivesFromOrEqual(context.MemberType));
@@ -80,16 +39,25 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(_pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    _pool));
+            }
         }
     }
-
-    // One parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -98,6 +66,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -120,16 +90,27 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn((TParam1)args[0].Value, _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    _pool));
+            }
         }
     }
-
-    // Two parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TParam2, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, TParam2, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, TParam2, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1, TParam2,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1, TParam2,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1, TParam2,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -138,6 +119,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -161,19 +144,29 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value,
-                _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        (TParam2)inArgs[1].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    (TParam2)args[1].Value,
+                    _pool));
+            }
         }
     }
-
-    // Three parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, TParam2, TParam3, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1, TParam2, TParam3,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -182,6 +175,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -206,20 +201,31 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value,
-                (TParam3)args[2].Value,
-                _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        (TParam2)inArgs[1].Value,
+                        (TParam3)inArgs[2].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    (TParam2)args[1].Value,
+                    (TParam3)args[2].Value,
+                    _pool));
+            }
         }
     }
-
-    // Four parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, TParam4, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3, TParam4,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -228,6 +234,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -253,21 +261,33 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value,
-                (TParam3)args[2].Value,
-                (TParam4)args[3].Value,
-                _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        (TParam2)inArgs[1].Value,
+                        (TParam3)inArgs[2].Value,
+                        (TParam4)inArgs[3].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    (TParam2)args[1].Value,
+                    (TParam3)args[2].Value,
+                    (TParam4)args[3].Value,
+                    _pool));
+            }
         }
     }
-
-    // Five parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4, TParam5, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4, TParam5,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -276,6 +296,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -302,22 +324,35 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value,
-                (TParam3)args[2].Value,
-                (TParam4)args[3].Value,
-                (TParam5)args[4].Value,
-                _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        (TParam2)inArgs[1].Value,
+                        (TParam3)inArgs[2].Value,
+                        (TParam4)inArgs[3].Value,
+                        (TParam5)inArgs[4].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    (TParam2)args[1].Value,
+                    (TParam3)args[2].Value,
+                    (TParam4)args[3].Value,
+                    (TParam5)args[4].Value,
+                    _pool));
+            }
         }
     }
-
-    // Six parameters
-
     [NoReflectionBaking]
-    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
-        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool>
-        where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool, TContract>
+    public class PoolableMemoryPoolProvider<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6,TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6,IMemoryPool>
+        where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6,IMemoryPool, TContract>
     {
         TMemoryPool _pool;
 
@@ -326,6 +361,8 @@ namespace Zenject
             : base(container, poolId)
         {
         }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
 
         public void Validate()
         {
@@ -353,15 +390,31 @@ namespace Zenject
                 _pool = Container.ResolveId<TMemoryPool>(PoolId);
             }
 
-            buffer.Add(_pool.Spawn(
-                (TParam1)args[0].Value,
-                (TParam2)args[1].Value,
-                (TParam3)args[2].Value,
-                (TParam4)args[3].Value,
-                (TParam5)args[4].Value,
-                (TParam6)args[5].Value,
-                _pool));
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+                        (TParam1)inArgs[0].Value,
+                        (TParam2)inArgs[1].Value,
+                        (TParam3)inArgs[2].Value,
+                        (TParam4)inArgs[3].Value,
+                        (TParam5)inArgs[4].Value,
+                        (TParam6)inArgs[5].Value,
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+                    (TParam1)args[0].Value,
+                    (TParam2)args[1].Value,
+                    (TParam3)args[2].Value,
+                    (TParam4)args[3].Value,
+                    (TParam5)args[4].Value,
+                    (TParam6)args[5].Value,
+                    _pool));
+            }
         }
     }
 }
-

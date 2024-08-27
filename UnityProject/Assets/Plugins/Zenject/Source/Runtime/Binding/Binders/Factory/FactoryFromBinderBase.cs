@@ -4,6 +4,7 @@ using ModestTree;
 
 #if !NOT_UNITY3D
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 #endif
 
 namespace Zenject
@@ -25,15 +26,9 @@ namespace Zenject
         }
 
         // Don't use this
-        internal DiContainer BindContainer
-        {
-            get; private set;
-        }
+        internal DiContainer BindContainer { get; private set; }
 
-        protected FactoryBindInfo FactoryBindInfo
-        {
-            get; private set;
-        }
+        protected FactoryBindInfo FactoryBindInfo { get; private set; }
 
         // Don't use this
         internal Func<DiContainer, IProvider> ProviderFunc
@@ -42,10 +37,7 @@ namespace Zenject
             set { FactoryBindInfo.ProviderFunc = value; }
         }
 
-        protected Type ContractType
-        {
-            get; private set;
-        }
+        protected Type ContractType { get; private set; }
 
         public IEnumerable<Type> AllParentTypes
         {
@@ -194,7 +186,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new [] { ContractType }, BindInfo.Arguments,
+                        ContractType, new[] {ContractType}, BindInfo.Arguments,
                         new PrefabProvider(prefab), BindInfo.InstantiatedCallback));
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
@@ -212,9 +204,45 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new [] { ContractType }, BindInfo.Arguments,
+                        ContractType, new[] {ContractType}, BindInfo.Arguments,
                         new PrefabProvider(prefab),
                         BindInfo.InstantiatedCallback), true);
+
+            return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+
+        public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromComponentInAssetReference(AssetReference prefab)
+        {
+            BindingUtil.AssertIsInterfaceOrComponent(ContractType);
+
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc = (container) => new AddressableInstantiateComponentProvider(
+                container,
+                gameObjectInfo,
+                new[] {ContractType},
+                BindInfo.Arguments,
+                BindInfo.InstantiatedCallback,
+                prefab,
+                ContractType,
+                true
+            );
+
+            return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
+        }
+        
+        public NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder FromAssetReferenceGameObject(AssetReferenceGameObject prefab)
+        {
+            var gameObjectInfo = new GameObjectCreationParameters();
+
+            ProviderFunc = (container) => new AddressableInstantiateGameObjectProvider(
+                container,
+                gameObjectInfo,
+                new[] {ContractType},
+                BindInfo.Arguments,
+                BindInfo.InstantiatedCallback,
+                prefab
+            );
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
         }
@@ -231,7 +259,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new [] { ContractType }, BindInfo.Arguments,
+                        ContractType, new[] {ContractType}, BindInfo.Arguments,
                         new PrefabProviderResource(resourcePath), BindInfo.InstantiatedCallback), true);
 
             return new NameTransformScopeConcreteIdArgConditionCopyNonLazyBinder(BindInfo, gameObjectInfo);
@@ -250,7 +278,7 @@ namespace Zenject
                     ContractType,
                     new PrefabInstantiator(
                         container, gameObjectInfo,
-                        ContractType, new [] { ContractType }, BindInfo.Arguments,
+                        ContractType, new[] {ContractType}, BindInfo.Arguments,
                         new PrefabProviderResource(resourcePath),
                         BindInfo.InstantiatedCallback));
 

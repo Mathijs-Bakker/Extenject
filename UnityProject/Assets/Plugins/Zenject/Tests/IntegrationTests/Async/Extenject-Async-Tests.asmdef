@@ -4,7 +4,8 @@
         "Zenject-TestFramework",
         "Zenject",
         "UnityEngine.TestRunner",
-        "Extenject-Async"
+        "Extenject-Async",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -18,6 +19,12 @@
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS"
     ],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+        "name": "com.cysharp.unitask",
+        "expression": "0.0.0",
+        "define": "UNITASK_PLUGIN"
+        }
+    ],
     "noEngineReferences": false
 }

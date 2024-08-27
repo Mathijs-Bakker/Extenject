@@ -1,0 +1,121 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Zenject.Internal;
+
+#if UNITASK_PLUGIN
+using Cysharp.Threading.Tasks;
+#else
+using System.Threading.Tasks;
+#endif
+
+namespace Zenject
+{
+<#
+    for (int paramCount = 0; paramCount <= 10; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ",";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? "," : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+    public class PlaceholderFactory<<#= tParams #> TValue> : PlaceholderFactoryBase<TValue>, IFactory<<#= tParams #> TValue>
+    {
+        // Note: Most of the time you should not override this method and should instead
+        // use BindFactory<>.FromIFactory if you want to do some custom logic
+#if !NOT_UNITY3D
+        [NotNull]
+#endif
+        public virtual TValue Create(<#= namedParams #>)
+        {
+            List<TypeValuePair> args = ZenPools.SpawnList<TypeValuePair>();
+            try
+            {
+<#
+        for (int i = 0; i < paramCount; i++)
+        {
+#>
+                args.Add(InjectUtil.CreateTypePair(param<#= (i + 1) #>));
+<#
+        }
+#>
+                return CreateInternal(args);
+            }
+            finally
+            {
+                ZenPools.DespawnList(args);
+            }
+        }
+
+#if !NOT_UNITY3D
+        [NotNull]
+#endif
+        public virtual async
+#if UNITASK_PLUGIN
+        UniTask<TValue>
+#else
+        Task<TValue>
+#endif
+        CreateAsync(<#= namedParams #>)
+        {
+            List<TypeValuePair> args = ListPool<TypeValuePair>.Instance.Spawn();
+            try
+            {
+<#
+        for (int i = 0; i < paramCount; i++)
+        {
+#>
+                args.Add(InjectUtil.CreateTypePair(param<#= (i + 1) #>));
+<#
+        }
+#>
+                return await CreateInternalAsync(args);
+            }
+            finally
+            {
+                ListPool<TypeValuePair>.Instance.Despawn(args);
+            }
+        }
+
+
+
+        protected sealed override IEnumerable<Type> ParamTypes
+        {
+            get 
+            { 
+<#
+        if (paramCount > 0)
+        {
+            for (int i = 0; i < paramCount; i++)
+            {
+#>
+                yield return typeof(TParam<#= (i + 1) #>);
+<#
+            }
+        }
+        else
+        {
+#>
+                yield break;
+<#
+        }
+#>
+            }
+        }
+    }
+
+<#
+    }
+#>
+}

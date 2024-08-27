@@ -1,0 +1,102 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using ModestTree;
+
+namespace Zenject
+{
+<#
+    for (int paramCount = 0; paramCount <= 6; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ",";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? ", " : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+    [NoReflectionBaking]
+    public class PoolableMemoryPoolProvider<<#= tParams #>TContract, TMemoryPool> : PoolableMemoryPoolProviderBase<TContract>, IValidatable
+        where TContract : IPoolable<<#= tParams #>IMemoryPool>
+        where TMemoryPool : IMemoryPool<<#= tParams #>IMemoryPool, TContract>
+    {
+        TMemoryPool _pool;
+
+        public PoolableMemoryPoolProvider(
+            DiContainer container, Guid poolId)
+            : base(container, poolId)
+        {
+        }
+
+        public override bool IsAsync => _pool?.IsAsync ?? false;
+
+        public void Validate()
+        {
+            Container.ResolveId<TMemoryPool>(PoolId);
+        }
+
+        public override void GetAllInstancesWithInjectSplit(
+            InjectContext context, List<TypeValuePair> args, out Action injectAction, List<object> buffer)
+        {
+            Assert.IsEqual(args.Count, <#= paramCount #>);
+            Assert.IsNotNull(context);
+
+            Assert.That(typeof(TContract).DerivesFromOrEqual(context.MemberType));
+<#
+        for (int i = 0; i < paramCount; i++)
+        {
+#>
+            Assert.That(args[<#=i#>].Type.DerivesFromOrEqual<TParam<#= i + 1#>>());
+<#
+        }
+#>
+
+            injectAction = null;
+
+            if (_pool == null)
+            {
+                _pool = Container.ResolveId<TMemoryPool>(PoolId);
+            }
+
+            if (_pool.IsAsync)
+            {
+                buffer.Add(new AsyncInject<TContract>(context, args, async (_, inArgs, _) =>
+                {
+                    return await _pool.SpawnAsync(
+<#
+        for (int i = 0; i < paramCount; i++)
+        {
+#>
+                        (TParam<#=i + 1#>)inArgs[<#=i#>].Value,
+<#
+        }
+#>
+                        _pool);
+                }));
+            }
+            else
+            {
+                buffer.Add(_pool.Spawn(
+<#
+        for (int i = 0; i < paramCount; i++)
+        {
+#>
+                    (TParam<#=i + 1#>)args[<#=i#>].Value,
+<#
+        }
+#>
+                    _pool));
+            }
+        }
+    }
+<#
+    }
+#>
+}

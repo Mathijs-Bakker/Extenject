@@ -16,6 +16,8 @@ namespace Zenject
             get;
         }
 
+        bool IsAsync => false;
+
         Type GetInstanceType(InjectContext context);
 
         // Return an instance which might be not yet injected to.

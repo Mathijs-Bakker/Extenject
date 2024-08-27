@@ -25,7 +25,7 @@ namespace Zenject
             set { BindStatement.SetFinalizer(value); }
         }
 
-        public AsyncFromBinderBase FromMethod(Func<Task<TConcrete>> method)
+        public AsyncFromBinderBase FromMethod(AsyncMethodDelegate<TConcrete> method)
         {
             BindInfo.RequireExplicitScope = false;
             // Don't know how it's created so can't assume here that it violates AsSingle
@@ -37,7 +37,7 @@ namespace Zenject
             return this;
         }
         
-        public AsyncFromBinderBase FromMethod(Func<CancellationToken, Task<TConcrete>> method)
+        public AsyncFromBinderBase FromMethod(AsyncCancellableMethodDelegate<TConcrete> method)
         {
             BindInfo.RequireExplicitScope = false;
             // Don't know how it's created so can't assume here that it violates AsSingle

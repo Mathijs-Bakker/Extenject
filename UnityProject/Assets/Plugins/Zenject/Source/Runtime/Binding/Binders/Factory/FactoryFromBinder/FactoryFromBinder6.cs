@@ -111,7 +111,7 @@ namespace Zenject
             // Unfortunately we have to pass the same contract in again to satisfy the generic
             // constraints below
             where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool>
-            where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool, TContract>
+            where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool, TContract>
         {
             return fromBinder.FromPoolableMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, TContract, TMemoryPool>(x => {});
         }
@@ -122,7 +122,7 @@ namespace Zenject
             // Unfortunately we have to pass the same contract in again to satisfy the generic
             // constraints below
             where TContract : IPoolable<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool>
-            where TMemoryPool : MemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool, TContract>
+            where TMemoryPool : IMemoryPool<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6, IMemoryPool, TContract>
         {
             Assert.IsEqual(typeof(TContract), typeof(TContract));
 

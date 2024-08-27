@@ -1,0 +1,70 @@
+<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+using UnityEngine;
+
+namespace Zenject
+{
+<#
+    for (int paramCount = 0; paramCount <= 10; paramCount++)
+    {
+        var range = Enumerable.Range(0, paramCount);
+        var tParams = string.Join(", ", range.Select(x => "TParam" + (x + 1)));
+        if (!string.IsNullOrEmpty(tParams))
+            tParams += ",";
+        var namedParams = string.Join(", ", range.Select(x => "TParam" + (x + 1) + " param" + (x + 1)));
+        var separator = paramCount > 0 ? ", " : "";
+
+        var names = string.Join(", ", range.Select(x => "param" + (x + 1)));
+#>
+    // NOTE: For this to work, the given component must be at the root game object of the thing
+    // you want to use in a pool
+    public class MonoMemoryPoolAsync<<#= tParams #>TValue>
+        : MemoryPoolAsync<<#= tParams #>TValue>
+        where TValue : Component
+    {
+        Transform _originalParent;
+
+        [Inject]
+        public MonoMemoryPoolAsync()
+        {
+        }
+
+        protected override void OnCreated(TValue item)
+        {
+            item.gameObject.SetActive(false);
+            // Record the original parent which will be set to whatever is used in the UnderTransform method
+            _originalParent = item.transform.parent;
+        }
+
+        protected override void OnDestroyed(TValue item)
+        {
+            GameObject.Destroy(item.gameObject);
+        }
+
+        protected override void OnSpawned(TValue item)
+        {
+            item.gameObject.SetActive(true);
+        }
+
+        protected override void OnDespawned(TValue item)
+        {
+            item.gameObject.SetActive(false);
+
+            if (item.transform.parent != _originalParent)
+            {
+                item.transform.SetParent(_originalParent, false);
+            }
+        }
+    }
+
+<#
+    }
+#>
+}
