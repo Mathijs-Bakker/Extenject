@@ -189,7 +189,7 @@ You can install Zenject using any of the following methods
     * Use `UnityProject/Assets/Plugins/Zenject/Source/package.json`
         * Window -> Package Manager
         * Select `Add package from git URL...`
-        * Use `https://github.com/<organization>/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source#<tag>`
+        * Use `https://github.com/Mathijs-Bakker/Extenject.git?path=UnityProject/Assets/Plugins/Zenject/Source`
 
 1.  __From Source__
 
