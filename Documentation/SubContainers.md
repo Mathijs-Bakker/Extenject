@@ -23,7 +23,7 @@
 
 In some cases it can be very useful to use multiple containers in the same application.  For example, if you are creating a word processor it might be useful to have a sub-container for each tab that represents a separate document.  This way, you could bind a bunch of classes `AsSingle()` within the sub-container and they could all easily reference each other as if they were all singletons.  Then you could instantiate multiple sub-containers to be used for each document, with each sub-container having unique instances of all the classes that handle each specific document.
 
-Another example might be if you are designing an open-world space ship game, you might want each space ship to have it's own container that contains all the class instances responsible for running that specific spaceship.
+Another example might be if you are designing an open-world space ship game, you might want each space ship to have its own container that contains all the class instances responsible for running that specific spaceship.
 
 This is actually how ProjectContext bindings work.  There is one container for the entire project, and when a unity scene starts up, the container within each SceneContext is created "underneath" the ProjectContext container.  All the bindings that you add in your scene MonoInstaller are bound to your SceneContext container.  This allows the dependencies in your scene to automatically get injected with ProjectContext bindings, because sub-containers automatically inherit all the bindings in their parent (and grandparent, etc.).
 
@@ -92,7 +92,7 @@ Note the following:
 
 ## Creating Sub-Containers on GameObject's by using Game Object Context
 
-One issue with the <a href="#hello-world-for-facades">sub-container hello world example</a> above is that it does not work very well for MonoBehaviour classes.  There is nothing preventing us from adding MonoBehaviour bindings such as FromComponentInNewPrefab, FromNewComponentOnNewGameObject, etc. to our ByInstaller/ByMethod sub-container - however these will cause these new game objects to be added to the root of the scene heirarchy, so we'll have to manually track the lifetime of these objects ourselves by calling GameObject.Destroy on them when the Facade is destroyed.  Also, there is no way to have GameObject's that exist in our scene at the start but also exist within our sub-container.  Also, using ByInstaller and ByMethod like above does not support the use of interfaces such as IInitializable / ITickable / IDisposable inside the subcontainer.  These problems can be solved by using Game Object Context.
+One issue with the <a href="#hello-world-for-facades">sub-container hello world example</a> above is that it does not work very well for MonoBehaviour classes.  There is nothing preventing us from adding MonoBehaviour bindings such as FromComponentInNewPrefab, FromNewComponentOnNewGameObject, etc. to our ByInstaller/ByMethod sub-container - however these will cause these new game objects to be added to the root of the scene hierarchy, so we'll have to manually track the lifetime of these objects ourselves by calling GameObject.Destroy on them when the Facade is destroyed.  Also, there is no way to have GameObject's that exist in our scene at the start but also exist within our sub-container.  Also, using ByInstaller and ByMethod like above does not support the use of interfaces such as IInitializable / ITickable / IDisposable inside the subcontainer.  These problems can be solved by using Game Object Context.
 
 For this example, let's try to actually implement something similar to the open world space ship game described in <a href="#introduction">the sub-container introduction</a>:
 
@@ -213,7 +213,7 @@ public class ShipInputHandler : MonoBehaviour
 
 <img src="Images/ShipFacadeExample1.png?raw=true" alt="Ship Facade Example"/>
 
-* The idea here is that everything at or underneath the Ship game object should be considered inside it's own sub-container.  When we're done, we should be able to add multiple ships to our scene, each with their own components ShipHealthHandler, ShipInputHandler, etc. that can treat each other as singletons.
+* The idea here is that everything at or underneath the Ship game object should be considered inside its own sub-container.  When we're done, we should be able to add multiple ships to our scene, each with their own components ShipHealthHandler, ShipInputHandler, etc. that can treat each other as singletons.
 * Try to validate your scene by pressing `CTRL+ALT+V`.  You should get an error that looks like this: `Unable to resolve type 'ShipHealthHandler' while building object with type 'Ship'.`
 * This is because the ShipHealthHandler component has not been added to our sub-container.  To address this:
     * Click on the HealthHandler game object and then click Add Component and type Zenject Binding (see <a href="../README.md#scene-bindings">here</a> for details on this feature)
@@ -744,7 +744,7 @@ public class TestInstaller : MonoInstaller
 }
 ```
 
-Now, if we instantiate any game objects inside the Greeter subcontainer and we do not specify an explicit parent, then they will be placed underneath a new game object named "Greeter".  This can help for organization purposes when reading the scene in the scene heirarchy.
+Now, if we instantiate any game objects inside the Greeter subcontainer and we do not specify an explicit parent, then they will be placed underneath a new game object named "Greeter".  This can help for organization purposes when reading the scene in the scene hierarchy.
 
 Note also that with this approach, you can no longer use `BindExecutionOrder<Greeter>` to adjust the execution order of the subcontainer.  However, if you later decide that you need to customize the execution order then you can do that by passing a custom kernel-derived class to the WithKernel method and then using BindExecutionOrder with that class.  For example:
 
