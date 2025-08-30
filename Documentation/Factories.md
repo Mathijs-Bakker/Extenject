@@ -245,7 +245,7 @@ Other things to be aware of:
 
 - Validation can be especially useful for dynamically created objects, because otherwise you may not catch the error until the factory is invoked at some point during runtime  (see the <a href="../README.md#object-graph-validation">validation section</a> for more details on validation)
 
-- Note that for dynamically instantiated MonoBehaviours (for example when using `FromComponentInNewPrefab` with `BindFactory)` injection should always occur before `Awake` and `Start`, so a common convention we recommend is to use `Awake`/`Start` for initialization logic and use the inject method strictly for saving dependencies (ie. similar to constructors for non-monobehaviours)
+- Note that for dynamically instantiated MonoBehaviours (for example when using `FromComponentInNewPrefab` with `BindFactory)` injection should always occur before `Awake` and `Start`, so a common convention we recommend is to use `Awake`/`Start` for initialization logic and use the inject method strictly for saving dependencies (i.e. similar to constructors for non-monobehaviours)
 
 - Unlike non-factory injection, you can have multiple runtime parameters declared with the same type.  In this case, the order that the values are given to the factory will be matched to the parameter order - assuming that you are using constructor or method injection.  However, note that this is not the case with field or property injection.  In those cases the order that values are injected is not guaranteed to follow the declaration order, since these fields are retrieved using `Type.GetFields` which does not guarantee order as described <a href="https://docs.microsoft.com/en-us/dotnet/api/system.type.getfields?redirectedfrom=MSDN&view=netcore-3.1#System_Type_GetFields">here</a>
 
@@ -567,7 +567,7 @@ Note that there is an equivalent method for memory pools called `BindMemoryPoolC
 
 ### Prefab Factory
 
-In some cases you might want the code that is calling the Create method to also provide the prefab to use for the new object.  You could directly call `DiContainer.InstantiatePrefabForComponent` but this would violate our rule of only injecting DiContainer into the 'composition root layer' (ie. factories and installers), so it would be better to write a custom factory like this instead:
+In some cases you might want the code that is calling the Create method to also provide the prefab to use for the new object.  You could directly call `DiContainer.InstantiatePrefabForComponent` but this would violate our rule of only injecting DiContainer into the 'composition root layer' (i.e. factories and installers), so it would be better to write a custom factory like this instead:
 
 ```csharp
 public class Foo

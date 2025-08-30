@@ -90,7 +90,7 @@ Before creating enhancement suggestions, please check the list of enhancements s
 * **Describe the current behavior** and **explain which behavior you expected to see instead** and why.
 * **List some other similar projects where this enhancement exists.**
 * **Specify which version of the project you're using.**
-* **Specify the current environment you're using.** if this is a useful information.
+* **Specify the current environment you're using.** if this is useful information.
 * **Provide a specific use case** - Often we get requests for a feature not realizing there is already a way to fulfill their use case. In other words, don't just give us a solution, give us a problem.
 
 

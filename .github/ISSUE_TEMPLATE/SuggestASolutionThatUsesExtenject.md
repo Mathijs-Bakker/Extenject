@@ -22,8 +22,8 @@ The markdwon used in the docs is like this:
 
 <br/><br/>
 
-* **Platform(s):** {Eg. iOS, Android and PlayStation}
-* **Genre(s):** {Eg. E-Learning}
+* **Platform(s):** {E.g. iOS, Android and PlayStation}
+* **Genre(s):** {E.g. E-Learning}
 * **Developer:** {Name of developer/company}
 
 <br/><br/>

@@ -199,7 +199,7 @@ Container.Decorate&lt;<b>ContractType</b>&gt;()
 
 Where: 
 
-* **ContractType** = The type that is being decoratored.  An object of this type will be injected into the DecoratorType class.
+* **ContractType** = The type that is being decorated.  An object of this type will be injected into the DecoratorType class.
 
 * **DecoratorType** = The decorator class.  This should be a concrete type and also should take as an injected parameter/field an object of type ContractType.
 

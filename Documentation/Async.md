@@ -26,7 +26,7 @@ Alternatively you can inject an intermediary object that tracks the result of th
 
 ### Example
 
-Lets see how we can inject async dependencies through an intermediary object. Async extensions implements `AsyncInject<T>` as this intermediary. You can use it as follows. 
+Let's see how we can inject async dependencies through an intermediary object. Async extensions implements `AsyncInject<T>` as this intermediary. You can use it as follows. 
 
 
 ```csharp

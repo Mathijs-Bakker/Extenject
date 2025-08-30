@@ -37,7 +37,7 @@ Before understanding memory pools it would be helpful to understand factories, s
 
 It doesn't take long when developing games in Unity before you realize that proper memory management is very important if you want your game to run smoothly (especially on mobile).  Depending on the constraints of the platform and the type of game you are working on, it might be very important to avoid unnecessary heap allocations as much as possible.  One very effective way to do this is to use memory pools.
 
-As an example let's look at at a case where we are dynamically creating a class:
+As an example let's look at a case where we are dynamically creating a class:
 
 ```csharp
 public class Foo
@@ -1388,7 +1388,7 @@ One mistake that can sometimes occur when using memory pools is that the spawned
 
 This isn't always a problem and can sometimes even be intentional.  Assuming the spawned object is not a MonoBehaviour, once the object is no longer used it will be automatically destroyed by the C# garbage collector anyway, so forgetting a `Despawn` in that case will not produce a memory leak.  The only drawback is that when the object is not returned to the pool, it means the pool has to spawn more objects next time which can be slightly less efficient.
 
-Also, of course, if you object has custom dispose logic that is important to run then that will be missed as well which could be a problem.
+Also, of course, if your object has custom dispose logic that is important to run then that will be missed as well which could be a problem.
 
 To detect these mistakes, Zenject includes an optional class that you can install that will throw exceptions when there are actively spawned objects when the scene is closed.  Just add the following to one of your scene installers:
 

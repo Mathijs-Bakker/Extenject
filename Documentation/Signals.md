@@ -512,11 +512,11 @@ When event driven program is abused, it is possible to find yourself in "callbac
 
 One of the problems of the signals is that when you subscribe to their types you are coupling your concrete signal types to the subscribers
 
-For example, Lets say I have a player and i want to save the game when i finish a level.
+For example, Lets say I have a player and I want to save the game when I finish a level.
 Ok easy, I create ``SignalLevelCompleted`` and then I subscribe it to my ``SaveGameSystem``
-then I also want to save when i reach a checkpoint, again i create ``SignalCheckpointReached``
+then I also want to save when I reach a checkpoint, again i create ``SignalCheckpointReached``
 and then I subscribe it to my ``SaveGameSystem``
-you are begining to get something like this...
+you are beginning to get something like this...
 ```csharp
 public class Example
 {
@@ -554,7 +554,7 @@ And then you realize you are coupling the types``signalLevelCompleted`` and ``Si
 So let's give the power of interfaces to signals!
 So i have the ``SignalCheckpointReached`` and ``SignalLevelCompleted`` both implementing **``ISignalGameSaver``**
 and my ``SaveGameSystem`` just Subscribes to **``ISignalGameSaver``** for saving the game
-So when i fire any of those signals the ``SaveGameSystem`` saves the game.
+So when I fire any of those signals the ``SaveGameSystem`` saves the game.
 Then you have something like this...
 ```csharp
 public class Example
@@ -588,15 +588,15 @@ public struct SignalLevelCompleted : ISignalGameSaver{}
 public interface ISignalGameSaver{}
 ```
 
-Now your ``SaveGameSystem`` doesnt knows about CheckPoints nor Level events, and just reacts to signals that save the game.
+Now your ``SaveGameSystem`` doesn't knows about CheckPoints nor Level events, and just reacts to signals that save the game.
 The main difference is in the Signal declaration and Firing
  - ``DeclareSignalWithInterfaces`` works like ``DeclareSignal`` but it declares the interfaces too.
  - ``AbstractFire`` is the same that ``Fire`` but it fires the interfacesjust if you have Declared the signal with interfaces 
  otherwise it will throw an exception.
 
 Ok, let's show even more power.
-Now i create another signal for the WorldDestroyed Achievement "SignalWorldDestroyed"
-But i also want my SoundSystem to play sounds when i reach a checkpoint and/or unlock an Achievement
+Now I create another signal for the WorldDestroyed Achievement "SignalWorldDestroyed"
+But I also want my SoundSystem to play sounds when I reach a checkpoint and/or unlock an Achievement
 So the code could look like this.
 ```csharp
 public class Example
@@ -663,11 +663,11 @@ In some cases it might be desirable to run a given signal asynchronously.  Async
 
 1. The update-order that the signal handlers are triggered might be more predictable.  When using synchronous signals, the signal handler methods are executed at the same time that the signal is fired, which could be triggered at any time during the frame, or in some cases multiple places if the signal is fired multiple times.  This can lead to some update-order issues.  With async signals, the signal handlers are always executed at the same time in the frame as configured by the TickPriority.
 
-2. Asynchronous signals can encourage less coupling between the sender and receiver, which is often what you want.  As explained <a href="#when-to-use-signals">above</a>, signals work best when they are used for "fire and forget" events where the sender doesn't care about the behaviour of any listeners.   By making a signal async, it can enforce this separation because the signal handler methods will be executed later, and therefore the sender actually cannot make direct use of the result of the handlers behaviour.
+2. Asynchronous signals can encourage less coupling between the sender and receiver, which is often what you want.  As explained <a href="#when-to-use-signals">above</a>, signals work best when they are used for "fire and forget" events where the sender doesn't care about the behaviour of any listeners.   By making a signal async, it can enforce this separation because the signal handler methods will be executed later, and therefore the sender actually cannot make direct use of the result of the handler's behaviour.
 
 3. Unexpected state changes can occur while firing just one signal.  For example, an object A might trigger a signal which would trigger some logic that would eventually cause A to be deleted.  If the signal was executed synchronously, then the call stack could eventually return to object A where the signal was fired, and object A might then attempt to execute commands afterwards that causes problems (since object A will have already been deleted)
 
-This is not to say that asynchronous signals are superious to synchronous signals.  Asynchronous signals have their own risks as well.
+This is not to say that asynchronous signals are superior to synchronous signals.  Asynchronous signals have their own risks as well.
 
 1. Debugging can be more difficult, because it isn't clear from the stack trace where the signal was fired.
 
@@ -677,12 +677,12 @@ This is not to say that asynchronous signals are superious to synchronous signal
 
 ### Signal Settings
 
-Most of the default settings for signals can be overriden via a settings property that is on the `ProjectContext`.  It can also be configured on a per-container level by setting the `DiContainer.Settings` property.  For signals this includes the following:
+Most of the default settings for signals can be overridden via a settings property that is on the `ProjectContext`.  It can also be configured on a per-container level by setting the `DiContainer.Settings` property.  For signals this includes the following:
 
 **Default Sync Mode** - This value controls the default value for the `DeclareSignal` property `RunSync`/`RunAsync` when it is left unspecified.  By default it is set to synchronous so will assume `RunSync` when unspecified by a call to `DeclareSignal`.  So if you are a fan of async signals then you could set this to async to assume async instead.
 
 **Missing Handler Default Response** - This value controls the default value when **RequireSubscriber**/**OptionalSubscriber**/**OptionalSubscriberWithWarning** is not specified for a call to `DeclareSignal`.  By default it is set to **OptionalSubscriber**.
 
-**Require Strict Unsubscribe** - When true, this will cause exceptions to be thrown if the scene ends and there are still signal handlers that have not yet unsubscribed yet.  By default it is false.
+**Require Strict Unsubscribe** - When true, this will cause exceptions to be thrown if the scene ends and there are still signal handlers that have not unsubscribed yet.  By default it is false.
 
 **Default Async Tick Priority** - This value controls the default tick priority when `RunAsync` is used with `DeclareSignal` but `WithTickPriority` is left unset.  By default it is set to 1, which will cause the signal handlers to be invoked right after all the normal tickables have been called.  This default is chosen because it will ensure that the signal is handled in the same frame that it is triggered, which can be important if the signal affects how the frame is rendered.
