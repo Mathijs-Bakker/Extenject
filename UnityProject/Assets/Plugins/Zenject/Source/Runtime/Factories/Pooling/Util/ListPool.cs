@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 
 namespace Zenject
 {
@@ -21,4 +24,15 @@ namespace Zenject
             list.Clear();
         }
     }
+
+#if !NOT_UNITY3D
+    static class ListPoolRuntimeState
+    {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticState()
+        {
+            StaticMemoryPoolRegistry.Reset();
+        }
+    }
+#endif
 }

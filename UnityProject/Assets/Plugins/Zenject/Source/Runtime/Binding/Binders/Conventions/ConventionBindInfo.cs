@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 
 namespace Zenject
 {
@@ -17,6 +20,14 @@ namespace Zenject
         readonly object _locker = new object();
 #endif
         static Dictionary<Assembly, Type[]> _assemblyTypeCache = new Dictionary<Assembly, Type[]>();
+
+#if !NOT_UNITY3D
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticState()
+        {
+            _assemblyTypeCache.Clear();
+        }
+#endif
 
         public void AddAssemblyFilter(Func<Assembly, bool> predicate)
         {

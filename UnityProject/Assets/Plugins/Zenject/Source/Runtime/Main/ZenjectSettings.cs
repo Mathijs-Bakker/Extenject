@@ -38,6 +38,15 @@ namespace Zenject
         public static ZenjectSettings Default = new ZenjectSettings();
 
 #if !NOT_UNITY3D
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticState()
+        {
+            SignalSettings.Default = new SignalSettings();
+            Default = new ZenjectSettings();
+        }
+#endif
+
+#if !NOT_UNITY3D
         [SerializeField]
 #endif
         bool _ensureDeterministicDestructionOrderOnApplicationQuit;

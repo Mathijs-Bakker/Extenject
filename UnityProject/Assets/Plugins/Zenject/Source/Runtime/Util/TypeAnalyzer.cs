@@ -5,6 +5,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using ModestTree;
 using Zenject.Internal;
+#if !NOT_UNITY3D
+using UnityEngine;
+#endif
 
 namespace Zenject
 {
@@ -39,18 +42,13 @@ namespace Zenject
             get; set;
         }
 
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStaticValues()
+#if !NOT_UNITY3D
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticState()
         {
-            if (!UnityEditor.EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-            
             _typeInfo.Clear();
             _allowDuringValidation.Clear();
+            ReflectionBakingCoverageMode = ReflectionBakingCoverageModes.FallbackToDirectReflection;
         }
 #endif
 

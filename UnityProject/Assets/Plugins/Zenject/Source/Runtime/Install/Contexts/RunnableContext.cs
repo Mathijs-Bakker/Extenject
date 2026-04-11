@@ -2,10 +2,6 @@
 #if !NOT_UNITY3D
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace Zenject
 {
     public abstract class RunnableContext : Context
@@ -18,19 +14,11 @@ namespace Zenject
 
         public bool Initialized { get; private set; }
         
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStaticValues()
+        static void ResetStaticState()
         {
-            if (!EditorSettings.enterPlayModeOptionsEnabled)
-            {
-                return;
-            }
-            
             _staticAutoRun = true;
         }
-#endif
 
 #if UNITY_EDITOR
         protected override void ResetInstanceFields()

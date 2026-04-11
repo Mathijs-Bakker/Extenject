@@ -1,5 +1,7 @@
 #if !NOT_UNITY3D
 
+using UnityEngine;
+
 namespace Zenject
 {
     // For some platforms, it's desirable to be able to add dependencies to Zenject before
@@ -11,13 +13,15 @@ namespace Zenject
     {
         static DiContainer _container;
 
-#if UNITY_EDITOR
-        // Required for disabling domain reload in enter the play mode feature. See: https://docs.unity3d.com/Manual/DomainReloading.html
-        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
-#endif
         public static void Clear()
         {
             _container = null;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStaticState()
+        {
+            Clear();
         }
 
         public static bool HasContainer
